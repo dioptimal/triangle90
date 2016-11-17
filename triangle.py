@@ -19,7 +19,7 @@ MAIN_INTERFACE = """
 2. По катету и прилежащему углу.
 3. По катету и противолещащему углу.
 4. По катету и гипотенузе.
-5. ДЗ
+5. По гипотенузе и углу
 """
 
 RESULT = """
@@ -28,8 +28,8 @@ RESULT = """
 Длина гипотенузы b = {0[2]:.2f}.
 Угол alfa1 = {0[3]:.2f} градусов.
 Угол alfa2 = {0[4]:.2f} градусов.
-Площадь треугольника = ДЗ
-Периметр треугольника = ДЗ
+Площадь треугольника per= {0[5]:.2f}
+Периметр треугольника plo = {0[6]:.2f}
 """
 
 class SimpleError(Exception):
@@ -73,8 +73,9 @@ def t_two_sides():
     b = hypot(a1, a2)
     alfa1 = degrees(asin(a2/b))
     alfa2 = degrees(asin(a1/b))
-
-    return a1, a2, b, alfa1, alfa2
+    per=a1+a2+b
+    plo=a1*a2/2
+    return a1, a2, b, alfa1, alfa2,per,plo
 
 def t_side_pri_u():
     a1=get_side(I_GET_SIDE)
@@ -82,8 +83,9 @@ def t_side_pri_u():
     b = a1 / cos(radians(alfa1))
     alfa2=90-alfa1
     a2 = sin(radians(alfa1)) * b
-
-    return a1, a2, b, alfa1, alfa2
+    per = a1 + a2 + b
+    plo = a1 * a2 / 2
+    return a1, a2, b, alfa1, alfa2, per, plo
 
 def t_side_pro_u():
     a1 = get_side(I_GET_SIDE)
@@ -91,8 +93,9 @@ def t_side_pro_u():
     b = a1 / sin(radians(alfa2))
     alfa1 = 90 - alfa2
     a2 = sin(radians(alfa1)) * b
-
-    return a1, a2, b, alfa1, alfa2
+    per = a1 + a2 + b
+    plo = a1 * a2 / 2
+    return a1, a2, b, alfa1, alfa2, per, plo
 
 def t_side_hip():
     a1 = get_side(I_GET_SIDE)
@@ -100,21 +103,34 @@ def t_side_hip():
     alfa1 = degrees(acos(a1 / b))
     alfa2 = 90 - alfa1
     a2 = sin(radians(alfa1)) * b
+    per = a1 + a2 + b
+    plo = a1 * a2 / 2
+    return a1, a2, b, alfa1, alfa2, per, plo
 
-    return a1,a2,b,alfa1,alfa2
+def t_pri_u_hip():
+    alfa1 = get_angle(I_GET_PRI_U)
+    b = get_side(I_GET_HIP)
+    alfa2 = 90 - alfa1
+    a2 = sin(radians(alfa1)) * b
+    a1=cos(radians(alfa1))*b
+    per = a1 + a2 + b
+    plo = a1 * a2 / 2
+    return a1, a2, b, alfa1, alfa2, per, plo
 
 triangle_type = {
     0: sys.exit,
     1: t_two_sides,
     2:t_side_pri_u,
     3:t_side_pro_u,
-    4:t_side_hip
+    4:t_side_hip,
+    5:t_pri_u_hip
 }
 
 def draw_triangle(triangle_params):
-    a1, a2, b, alfa1, alfa2 = triangle_params
+    a1, a2, b, alfa1, alfa2,per,plo = triangle_params
     for x in range(1, round(max(a1, a2)) + 1):
         print('L.' * int(round(x * tan(radians(min(alfa1, alfa2))))))
+
 
 def main():
     while True:
